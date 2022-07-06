@@ -23,6 +23,15 @@ namespace GestoreEventi
 {
     internal class Evento
     {
+		public int PostiRiservati { get; private set; }
+
+		public Evento(string titolo, DateTime data, uint postiMax, int postiRiservati = 0)
+		{
+			this.TitoloEvento = titolo;
+			this.Data = data;
+			this.PostiMax = postiMax;
+			this.PostiRiservati = postiRiservati;
+		}
 		public string TitoloEvento
 		{
 			get
@@ -49,7 +58,6 @@ namespace GestoreEventi
 			{
 				Data = value;
 				DateTime now = DateTime.Now;
-				//Date.Day && Date.Month && Date.Year <= now.Day && now.Month && now.Year
 				if (Data < now.Date)
 				{
 					throw new Exception("no..mi dispiace.");
@@ -82,15 +90,7 @@ namespace GestoreEventi
 				}
 			}
 		}
-		public int PostiRiservati { get; private set; }
-
-		public Evento(string titolo, DateTime Date, uint postiMax, int postiRiservati = 0)
-		{
-			this.TitoloEvento = titolo;
-			this.Data = Date;
-			this.PostiMax = postiMax;
-			this.PostiRiservati = postiRiservati;
-		}
+	
 
 		public void Prenota()
 		{
