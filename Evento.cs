@@ -23,16 +23,9 @@ namespace GestoreEventi
 {
     internal class Evento
     {
-		public int PostiRiservati { get; private set; }
+        private DateTime data;
 
-		public Evento(string titolo, DateTime data, uint postiMax, int postiRiservati = 0)
-		{
-			this.TitoloEvento = titolo;
-			this.Data = data;
-			this.PostiMax = postiMax;
-			this.PostiRiservati = postiRiservati;
-		}
-		public string TitoloEvento
+        public string TitoloEvento
 		{
 			get
 			{
@@ -90,16 +83,57 @@ namespace GestoreEventi
 				}
 			}
 		}
-	
 
-		public void Prenota()
+        public int PostiRiservati { get; private set; }
+		public Evento(string titolo, DateTime data, uint postiMax, int postiRiservati = 0)
 		{
+			this.TitoloEvento = titolo;
+			this.Data = data;
+			this.PostiMax = postiMax;
+			this.PostiRiservati = postiRiservati;
+		}
+  
 
+        public void getPrenota(int postiUtente)
+		{
+			Console.WriteLine("Quanti posti vuoi prenotare?");
+			postiUtente = int.Parse(Console.ReadLine());
+
+			if (postiUtente <= 0)
+			{
+				throw new Exception("Inserimento non valido.Il numero deve essere positivo..");
+			}
+			else if (data < DateTime.Now)
+			{
+				throw new Exception("Non è possibile prenotare un evento già passato");
+			}
+			else if (this.PostiMax == this.PostiMax)
+			{
+				throw new Exception("Mi dispiace, tutto pieno");
+			}
+			else
+			{
+				this.PostiRiservati += postiUtente;
+			}
 		}
 
-		public void CancellaPrenotazione()
+		public void CancellaPrenotazione(int codDisdetta)
 		{
+			Console.WriteLine("Quanti posti vuoi disdire?");
+			codDisdetta = int.Parse(Console.ReadLine());
 
+			if (data < DateTime.Now)
+			{
+				throw new Exception("Non puoi disdire un evento già passato!");
+			}
+			else if (codDisdetta > PostiRiservati)
+			{
+				throw new Exception("Non è possibile cancellare più posti di quelli già prenotati...");
+			}
+			else
+			{
+				codDisdetta -= PostiRiservati;
+			}
 		}
 	}
 }
