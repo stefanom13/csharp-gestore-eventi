@@ -23,117 +23,119 @@ namespace GestoreEventi
 {
     internal class Evento
     {
-        private DateTime data;
+        public string titolo;
+
+        protected string data;
+        public int postiMax;
+        public int prenotazione { get; protected set; }
+
+        public string Data
+        {
+            get { return data; }
+
+            set
+            {
+                string today = DateTime.Today.ToShortDateString();
+                DateTime Today = DateTime.Parse(today);
+                DateTime tempDate = DateTime.Parse(value);
+                if (Today > tempDate)
+                {
+                    throw new Exception("***Attenzione l'evento è giù passato!!! ***");
+                }
+
+                this.data = value;
+            }
+        }
 
         public string TitoloEvento
 		{
 			get
 			{
-				return TitoloEvento;
+				return titolo;
 			}
 			set
 			{
-				TitoloEvento = value;
+				titolo = value;
 
-				if (value.Length == 0)
+				if (value.Length <= 0)
 				{
 					throw new ArgumentException("Questo campo non può essere vuoto...");
 				}
 			}
-		}
-		public DateTime Data
+            
+        }
+
+		public int PostiMax
 		{
 			get
 			{
-				return Data;
+				return postiMax;
 			}
 			set
 			{
-				Data = value;
-				DateTime now = DateTime.Now;
-				if (Data < now.Date)
-				{
-					throw new Exception("no..mi dispiace.");
-				}
-				else if (Data == now.Date)
-				{
-					throw new Exception("L evento è oggi");
-				}
-			}
-		}
-		public uint PostiMax
-		{
-			get
-			{
-				return PostiMax;
-			}
-			private set
-			{
-				PostiMax = value;
-				try
-				{
-					if (PostiMax is uint)
-					{
-						PostiMax = (uint)PostiMax;
-					}
-				}
-				catch (Exception)
-				{
-					Console.WriteLine("inserimento non valido. Il numero deve essere positivo.");
-				}
-			}
-		}
 
-        public int PostiRiservati { get; private set; }
-		public Evento(string titolo, DateTime data, uint postiMax, int postiRiservati = 0)
-		{
-			this.TitoloEvento = titolo;
-			this.Data = data;
-			this.PostiMax = postiMax;
-			this.PostiRiservati = postiRiservati;
-		}
-  
+                if (value <= 0)
+                {
+                    throw new Exception("***Attenzione Devi inserire un nome all'evento!! ***");
+                }
 
-        public void getPrenota(int postiUtente)
-		{
-			Console.WriteLine("Quanti posti vuoi prenotare?");
-			postiUtente = int.Parse(Console.ReadLine());
-
-			if (postiUtente <= 0)
-			{
-				throw new Exception("Inserimento non valido.Il numero deve essere positivo..");
-			}
-			else if (data < DateTime.Now)
-			{
-				throw new Exception("Non è possibile prenotare un evento già passato");
-			}
-			else if (this.PostiMax == this.PostiMax)
-			{
-				throw new Exception("Mi dispiace, tutto pieno");
-			}
-			else
-			{
-				this.PostiRiservati += postiUtente;
-			}
+                postiMax = value;
+            }
 		}
+        public Evento(string titolo, int postiMax, string data)
+        {
+
+            this.TitoloEvento = titolo;
+
+            this.PostiMax = postiMax;
+
+            this.Data = data;
+
+            this.prenotazione = 0;
+        }
+
+
+
+
+
+        public void getPrenota(int numero)
+		{
+            string today = DateTime.Today.ToShortDateString();
+            DateTime Today = DateTime.Parse(today);
+            DateTime date = DateTime.Parse(this.data);
+            if (Today > date)
+            {
+                throw new Exception("***Attenzione l'evento è giù passato!!! ***");
+            }
+            if (this.prenotazione >= this.PostiMax)
+            {
+                throw new Exception("***Attenzione non ci sono posti disponibili!!! ***");
+            }
+            this.prenotazione += numero;
+        }
 
 		public void CancellaPrenotazione(int codDisdetta)
 		{
-			Console.WriteLine("Quanti posti vuoi disdire?");
-			codDisdetta = int.Parse(Console.ReadLine());
+            string today = DateTime.Today.ToShortDateString();
+            DateTime Today = DateTime.Parse(today);
+            DateTime date = DateTime.Parse(this.data);
+            if (Today > date)
+            {
+                throw new Exception("***Attenzione l'evento è giù passato!!! ***");
+            }
+            if ((this.prenotazione -= codDisdetta) <= 0 || this.prenotazione <= 0)
+            {
+                throw new Exception("***Attenzione non si puo revocare tutti questi posti!!! ***");
+            }
 
-			if (data < DateTime.Now)
-			{
-				throw new Exception("Non puoi disdire un evento già passato!");
-			}
-			else if (codDisdetta > PostiRiservati)
-			{
-				throw new Exception("Non è possibile cancellare più posti di quelli già prenotati...");
-			}
-			else
-			{
-				codDisdetta -= PostiRiservati;
-			}
-		}
+            this.prenotazione += codDisdetta;
+
+            this.prenotazione -= codDisdetta;
+        }
 	}
+    //public override string ToString()
+    //{
+      // return this.data + " - " + this.titolo;
+    //}
 }
+

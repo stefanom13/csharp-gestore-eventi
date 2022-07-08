@@ -49,4 +49,6 @@
 
 using GestoreEventi;
 
+bool validazione = true;
 
+// creo evento
